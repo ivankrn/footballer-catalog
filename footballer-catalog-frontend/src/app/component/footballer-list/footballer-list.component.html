@@ -1,0 +1,32 @@
+<div class="card">
+    <div class="card-body">
+        <table class="table table-light table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Фамилия</th>
+                    <th scope="col">Пол</th>
+                    <th scope="col">Дата рождения</th>
+                    <th scope="col">Название команды</th>
+                    <th scope="col">Страна</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody class="table">
+                <tr *ngFor="let footballer of footballers">
+                    <td>{{ footballer.firstName }}</td>
+                    <td>{{ footballer.lastName }}</td>
+                    <td>{{ Gender[footballer.gender] }}</td>
+                    <td>{{ footballer.birthdate }}</td>
+                    <td>{{ footballer.team?.name }}</td>
+                    <td>{{ Country[footballer.country] }}</td>
+                    <td>
+                        <button type="button" class="btn btn-info" [routerLink]="['edit', footballer.id]">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
