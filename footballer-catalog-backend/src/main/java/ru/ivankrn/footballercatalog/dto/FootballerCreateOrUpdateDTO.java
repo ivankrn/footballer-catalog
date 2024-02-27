@@ -1,5 +1,6 @@
 package ru.ivankrn.footballercatalog.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import ru.ivankrn.footballercatalog.database.model.Country;
@@ -14,10 +15,12 @@ public record FootballerCreateOrUpdateDTO(
         @NotBlank
         String lastName,
         @EnumValue(enumClass = Gender.class)
+        @Schema(implementation = Gender.class)
         String gender,
         @NotNull
         LocalDate birthdate,
         Long teamId,
         @EnumValue(enumClass = Country.class)
+        @Schema(implementation = Country.class)
         String country) {
 }
