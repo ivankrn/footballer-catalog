@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import ru.ivankrn.footballercatalog.controller.error.ErrorResponse;
 import ru.ivankrn.footballercatalog.dto.FootballerCreateOrUpdateDTO;
@@ -28,6 +29,7 @@ import java.util.List;
 public class FootballerController {
 
     private final FootballerService footballerService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Operation(summary = "Получить всех футболистов")
     @ApiResponses(value = {
@@ -78,8 +80,12 @@ public class FootballerController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "При успешном создании",
-                    content = @Content),
+                    description = "Данные о созданном футболисте (при успешном создании)",
+                    content = {
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = FootballerDTO.class))
+                    }),
             @ApiResponse(
                     responseCode = "400",
                     description = "При ошибке валидации",
@@ -89,17 +95,23 @@ public class FootballerController {
                     ))
     })
     @PostMapping
-    public void createFootballer(@Parameter(description = "футболист") @RequestBody @Valid
+    public FootballerDTO createFootballer(@Parameter(description = "футболист") @RequestBody @Valid
                                  FootballerCreateOrUpdateDTO footballerDTO) {
-        footballerService.create(footballerDTO);
+        FootballerDTO newFootballer = footballerService.create(footballerDTO);
+        simpMessagingTemplate.convertAndSend("/topic/footballers", newFootballer);
+        return newFootballer;
     }
 
     @Operation(summary = "Изменить футболиста")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "При успешном изменении",
-                    content = @Content),
+                    description = "Данные о измененном футболисте (при успешном изменении)",
+                    content = {
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = FootballerDTO.class))
+                    }),
             @ApiResponse(
                     responseCode = "400",
                     description = "При ошибке валидации",
@@ -116,10 +128,12 @@ public class FootballerController {
                     ))
     })
     @PutMapping("/{id}")
-    public void updateFootballer(@Parameter(description = "id футболиста") @PathVariable long id,
+    public FootballerDTO updateFootballer(@Parameter(description = "id футболиста") @PathVariable long id,
                                  @Parameter(description = "измененный футболист") @RequestBody @Valid
                                  FootballerCreateOrUpdateDTO footballerDTO) {
-        footballerService.update(id, footballerDTO);
+        FootballerDTO updatedFootballer = footballerService.update(id, footballerDTO);
+        simpMessagingTemplate.convertAndSend("/topic/footballers", updatedFootballer);
+        return updatedFootballer;
     }
 
     @Operation(summary = "Удалить футболиста по id")

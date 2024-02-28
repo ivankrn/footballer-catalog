@@ -20,8 +20,8 @@ public class FootballerServiceImpl implements FootballerService {
     private final FootballerRepository repository;
 
     @Override
-    public void create(FootballerCreateOrUpdateDTO footballer) {
-        repository.save(mapper.convertFromDTO(footballer));
+    public FootballerDTO create(FootballerCreateOrUpdateDTO footballer) {
+        return mapper.convertToDTO(repository.save(mapper.convertFromDTO(footballer)));
     }
 
     @Override
@@ -35,10 +35,10 @@ public class FootballerServiceImpl implements FootballerService {
     }
 
     @Override
-    public void update(long id, FootballerCreateOrUpdateDTO footballerDTO) {
+    public FootballerDTO update(long id, FootballerCreateOrUpdateDTO footballerDTO) {
         Footballer footballer = repository.findById(id).orElseThrow(NotFoundException::new);
         mapper.updateFromDTO(footballerDTO, footballer);
-        repository.save(footballer);
+        return mapper.convertToDTO(repository.save(footballer));
     }
 
     @Override

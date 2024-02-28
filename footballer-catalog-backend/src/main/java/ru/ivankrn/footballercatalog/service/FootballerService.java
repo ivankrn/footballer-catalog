@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface FootballerService {
 
-    void create(FootballerCreateOrUpdateDTO footballer);
+    FootballerDTO create(FootballerCreateOrUpdateDTO footballer);
 
     FootballerDTO findById(long id);
 
     List<FootballerDTO> findAll();
 
-    void update(long id, FootballerCreateOrUpdateDTO team);
+    FootballerDTO update(long id, FootballerCreateOrUpdateDTO team);
 
     void deleteById(long id);
 
